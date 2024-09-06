@@ -1,0 +1,51 @@
+/* Container to center and space content */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Full viewport height */
+    background-color: #f5f5f5; /* Light background color for the page */
+  }
+  
+  /* Row styling for alignment and spacing */
+  .container .row {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff; /* White background for the login form */
+    padding: 20px;
+    border-radius: 8px; /* Rounded corners for the form */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    max-width: 400px; /* Maximum width of the form */
+    width: 100%; /* Full width up to the maximum */
+  }
+  
+  /* Column styling for spacing between input fields */
+  .container .row .col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; 
+  }
+  
+  /* Optional: Add styling for TextField if needed */
+  .TextField {
+    width: 100%; 
+  }
+  
+  /* Additional styles for buttons or form submission */
+  .container .row .col button {
+    background-color: #574ff6;
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+  
+  .container .row .col button:hover {
+    background-color: #0056b3; /* Darker shade for button hover effect */
+  }
+  
