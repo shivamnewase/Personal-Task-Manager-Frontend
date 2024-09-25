@@ -1,10 +1,10 @@
 import { AuthType } from "../type";
-import { login } from "../API";
+import { login, getUsersList } from "../API";
 import { setAuthenticate } from "../API";
 
 export const loginAction = (reqBody, navigate) => async (dispatch) => {
   const reqUpdatebody = { email: reqBody.username, password: reqBody.password };
-  console.log("🚀 ~ loginAction ~ reqUpdatebody:", reqUpdatebody);
+
   try {
     const loginResponse = await login(reqUpdatebody);
 
@@ -20,8 +20,28 @@ export const loginAction = (reqBody, navigate) => async (dispatch) => {
         payload: loginResponse.data.data,
       });
     }
-    navigate('/Home');
+    navigate("/Home");
   } catch (error) {
     console.log("error", error);
+  }
+};
+
+export const getUsersListAction = () => async (dispatch) => {
+  try {
+    const getUserListResponse = await getUsersList();
+   
+    dispatch({ type: AuthType.USER_LIST, payload: getUserListResponse.data.data });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const logOutAction = () => async (dispatch) => {
+  try {
+    localStorage.clear();
+    window.location.replace("/");
+    dispatch({ type: AuthType.LOGOUT });
+  } catch (error) {
+    console.log(error);
   }
 };

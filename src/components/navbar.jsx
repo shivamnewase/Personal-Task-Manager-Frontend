@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -17,10 +17,16 @@ import { Button } from "@mui/material";
 import BasicTabs from "./Main";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { useTheme } from '../context/Theme'; // Ensure you are importing useTheme correctly
+import { useTheme } from "../context/Theme"; // Ensure you are importing useTheme correctly
 import ThemeToggleSwitch from "../theme/themeToggleSwitch";
-const drawerWidth = 240;
+import { useDispatch, useSelector } from "react-redux";
+import { logOutAction } from "../redux/actions/auth.action";
+import MenuItemTab from "./MenuDashboard/MenuItemsButton";
+import CreateModal from "./Modal/Task/CreateModal";
+import { showAllProjectAction } from "../redux/actions/project.action";
+import Sidebar from "./Sidebar";
 
+const drawerWidth = 240;
 const openedMixin = (theme) => ({
   width: drawerWidth,
   transition: theme.transitions.create("width", {
@@ -80,34 +86,63 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function MiniDrawer() {
-  // const theme = useTheme(); // Ensure useTheme is being used correctly
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+  const [openCreateModal, setOpenCreateModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [scroll, setScroll] = React.useState("paper");
+  const [projectDataLoaded, setProjectDataLoaded] = useState(false);
+  const createTaskModal = useContext('sss');
   const openButton = Boolean(anchorEl);
-  const {theme } = useTheme();
-  const handleDrawerOpen = () => {
-    setOpen(true);
+  const { theme } = useTheme();
+  const { projectList } = useSelector((state) => state.project);
+
+  const handleDrawerOpen = () => setOpen(true);
+  const handleDrawerClose = () => setOpen(false);
+
+  const handleClick = (event) => setAnchorEl(event.currentTarget);
+  const handleClose = () => setAnchorEl(null);
+
+  const logout = () => {
+    handleClose(); // Close the menu on logout
+    dispatch(logOutAction());
   };
 
-  const handleDrawerClose = () => {
-    setOpen(false);
+  // const handleOpenModal = () => setOpenCreateModal(true);
+
+  const handleOpenModal = (scrollType) => {
+    setScroll(scrollType);
+    setOpenCreateModal(true);
+
+    setProjectDataLoaded(true);
   };
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleCloseModal = () => {
+    setOpenCreateModal(false);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  useEffect(() => {
+    dispatch(showAllProjectAction());
+  }, []);
 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
+      <CreateModal
+        openCreateModal={openCreateModal}
+        handleCloseModal={handleCloseModal}
+        scroll={scroll}
+      />
       <AppBar position="fixed" open={open}>
-        <Toolbar>
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <IconButton
-            color="inherit"
+            // color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
@@ -119,40 +154,67 @@ export default function MiniDrawer() {
             <i className="fa-solid fa-bars"></i>
           </IconButton>
 
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1 }}
-          >
+          <Typography variant="h6" noWrap component="div">
             Task Management
           </Typography>
 
-          <Button
-            variant="contained"
-            size="small"
-            sx={{ textTransform: "capitalize", marginRight: 2 }}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "start",
+              alignItems: "center",
+              marginLeft: 2,
+              flexGrow: 1,
+              textTransform: "capitalize",
+              gap: 2,
+            }}
           >
-            Create
-          </Button>
+            <MenuItemTab />
+            <Button
+              sx={{ textTransform: "capitalize" }}
+              variant="contained"
+              size="small"
+              onClick={() => handleOpenModal("paper")}
+            >
+              {" "}
+              Create
+            </Button>
+            <Menu
+              id="demo-positioned-menu"
+              aria-labelledby="demo-positioned-button"
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+            >
+             
+            </Menu>
+          </Box>
 
           <Button
             sx={{
-              backgroundColor: 'background.paper',
+              backgroundColor: "background.paper",
               width: 40,
               height: 40,
-              minWidth: 'auto',
-              borderRadius: '50%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
+              minWidth: "auto",
+              borderRadius: "50%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
               padding: 0,
-              color: 'text.primary',
+              color: "text.primary",
             }}
             id="basic-button"
-            aria-controls={open ? "basic-menu" : undefined}
+            aria-controls={openButton ? "basic-menu" : undefined}
             aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
+            aria-expanded={openButton ? "true" : undefined}
             onClick={handleClick}
           >
             <i className="fa-solid fa-user"></i>
@@ -168,10 +230,10 @@ export default function MiniDrawer() {
           >
             <MenuItem onClick={handleClose}>Profile</MenuItem>
             <MenuItem onClick={handleClose}>My account</MenuItem>
-            <MenuItem onClick={handleClose}>Logout</MenuItem>
+            <MenuItem onClick={logout}>Logout</MenuItem>
           </Menu>
-          
-         <ThemeToggleSwitch />
+
+          <ThemeToggleSwitch />
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -189,76 +251,10 @@ export default function MiniDrawer() {
               ></i>
             )}
           </IconButton>
+          
         </DrawerHeader>
         <Divider />
-        <List>
-          {["Task List"].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  px: 2.5,
-                  ...(open && {
-                    justifyContent: "initial",
-                  }),
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    justifyContent: "center",
-                    ...(open && {
-                      mr: 3,
-                    }),
-                  }}
-                >
-                  {index % 2 === 0 ? (
-                    <i className="fa-duotone fa-solid fa-file"></i>
-                  ) : (
-                    text
-                  )}
-                </ListItemIcon>
-                <ListItemText
-                  primary={text}
-                  sx={{
-                    ...(open ? { opacity: 1 } : { opacity: 0 }),
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
-          {/* {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  px: 2.5,
-                  ...(open && {
-                    justifyContent: "initial",
-                  }),
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    justifyContent: "center",
-                    ...(open && {
-                      mr: 3,
-                    }),
-                  }}
-                >
-                  {index % 2 === 0 ? text : text}
-                </ListItemIcon>
-                <ListItemText
-                  primary={text}
-                  sx={{
-                    ...(open ? { opacity: 1 } : { opacity: 0 }),
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-          ))} */}
-        </List>
+        <Sidebar projectList={projectList} open={open} />
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />

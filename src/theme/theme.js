@@ -7,6 +7,7 @@ export const darkTheme = createTheme({
     primary: {
       main: '#1e88e5', // Example color for primary button
     },
+    // secondary:{main:'#00fff0'},
     background: {
       default: '#121212', // Background color for the app
       paper: '#1e1e1e', // Paper (AppBar, Drawer) background
@@ -30,9 +31,9 @@ export const darkTheme = createTheme({
           color: '#ffffff', // Button text color
           borderRadius: '4px',
         },
-        contained: {
-          backgroundColor: '#1e88e5', // Contained button background color
-        },
+        // contained: {
+        //   backgroundColor: '#1e88e5', // Contained button background color
+        // },
       },
     },
     MuiTypography: {
@@ -49,6 +50,11 @@ export const darkTheme = createTheme({
         },
       },
     },
+    IconButton:{
+      styleOverrides: {
+        color:'#ffffff'
+      }
+    },
   },
 });
 
@@ -59,6 +65,7 @@ export const lightTheme = createTheme({
     primary: {
       main: '#1e88e5', // Example color for primary button
     },
+    // secondary:{main:'#00fff0'},
     background: {
       default: '#f5f5f5', // Background color for the app
       paper: '#ffffff', // Paper (AppBar, Drawer) background
@@ -73,6 +80,7 @@ export const lightTheme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: '#ffffff', // AppBar background color
+         
         },
       },
     },
@@ -82,9 +90,9 @@ export const lightTheme = createTheme({
           color: '#000000', // Button text color
           borderRadius: '4px',
         },
-        contained: {
-          backgroundColor: '#1e88e5', // Contained button background color
-        },
+        // contained: {
+        //   backgroundColor: '#1e88e5', // Contained button background color
+        // },
       },
     },
     MuiTypography: {
@@ -101,5 +109,19 @@ export const lightTheme = createTheme({
         },
       },
     },
+    IconButton:{
+      styleOverrides: {
+        root: {
+        color:'#000000'
+        },
+      }
+    },
+    MuiBox:{
+      styleOverrides: {
+        box: {
+          backgroundColor: '#ff00ff', // Drawer background color
+        },
+      },
+    }
   },
 });

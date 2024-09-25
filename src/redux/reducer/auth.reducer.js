@@ -1,14 +1,15 @@
 import { AuthType } from "../type";
 
 const initialState = {
-  user: JSON.parse(localStorage.getItem('user')),
+  user: JSON.parse(localStorage.getItem("user")),
   loading: false,
-  error: null,
+  userList: [],
+  error: undefined,
 };
 
 const authReducer = (state = initialState, action) => {
   const { type, payload = {} } = action;
-  //const { data } = payload;
+ 
 
   switch (type) {
     case AuthType.LOGIN:
@@ -16,18 +17,23 @@ const authReducer = (state = initialState, action) => {
         ...state,
         user: payload,
         loading: false,
-        error: null,
+        error: undefined,
+      };
+    case AuthType.USER_LIST:
+      return {
+        ...state,
+        userList: payload,
       };
     case AuthType.LOGOUT:
       return {
         ...state,
         user: undefined,
         loading: false,
-        error: null,
+        error: undefined,
       };
-      default: {
-        return state;
-      }
+    default: {
+      return state;
+    }
   }
 };
 
