@@ -20,7 +20,7 @@ export const loginAction = (reqBody, navigate) => async (dispatch) => {
         payload: loginResponse.data.data,
       });
     }
-    navigate("/Home");
+    navigate("/");
   } catch (error) {
     console.log("error", error);
   }

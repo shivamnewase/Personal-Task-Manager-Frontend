@@ -13,6 +13,7 @@ export const API = axios.create({
 export const setAuthenticate = (token) => {
   API.interceptors.request.use((config) => {
     if (token) {
+      console.log("🚀 ~ API.interceptors.request.use ~ token:", token)
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

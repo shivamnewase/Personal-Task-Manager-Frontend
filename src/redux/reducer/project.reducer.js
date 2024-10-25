@@ -8,6 +8,7 @@ const initialState = {
   isLoading: false,
   error: undefined,
   message: undefined,
+  activeProject:""
 };
 
 export const ProjectReducer = (state = initialState, action) => {
@@ -81,6 +82,11 @@ export const ProjectReducer = (state = initialState, action) => {
         ...state,
         isLoading: payload,
       };
+    case ProjectType.ACTIVE_PROJECT:
+      return{
+        ...state,
+        activeProject:payload
+      }
     default: {
       return state;
     }

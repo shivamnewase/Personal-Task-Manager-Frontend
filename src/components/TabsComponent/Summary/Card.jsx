@@ -21,7 +21,7 @@ export default function Card({ list }) {
   const allCardNames = ["DONE", "PROCESS", "REVIEW", "TO DO"];
 
   return (
-    <Grid container spacing={10} sx={{ marginBottom: "40px", paddingInline: '85px' }}>
+    <Grid container spacing={10} sx={{ marginBottom: "40px"}}>
       {allCardNames.map((cardName) => {
         const data = list?.find((item) => item._id === cardName) || { count: 0 };
 

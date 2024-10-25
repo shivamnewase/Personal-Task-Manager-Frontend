@@ -75,3 +75,7 @@ export const projectLoading = (loading = true) => async(dispatch) =>{
 }
 
 
+export const activeProjectAction = (activeProject)=> async(dispatch)=>{
+
+  dispatch({type:ProjectType.ACTIVE_PROJECT,payload:activeProject})
+}

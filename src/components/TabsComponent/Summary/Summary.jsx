@@ -40,8 +40,8 @@ export default function BasicGrid() {
   const { user } = useSelector((state) => state.auth);
   const theme = useTheme(); // Access the theme
   
-
-  const { taskStatusList, projectTaks, taskPriorityList } = useSelector(
+  
+  const { taskStatusList, projectTaks, taskPriorityList, } = useSelector(
     (state) => state.project
   );
 
@@ -78,7 +78,7 @@ export default function BasicGrid() {
       {taskStatusList.length > 0 && <Card list={taskStatusList} />}
 
       {taskStatusList.length > 0 && (
-        <Grid container spacing={5} sx={{ paddingInline:'85px' }}>
+        <Grid container spacing={5} >
           <Grid item xs={6} md={6}>
             <Item sx={{ display:'flex',justifyContent:'center' }}>
               <SimplePieChart taskStatusList={taskStatusList} />
@@ -89,11 +89,7 @@ export default function BasicGrid() {
               <SimpleBarChart taskPriorityList={taskPriorityList} />
             </Item>
           </Grid>
-          {/* <Grid item xs={6} md={6}>
-            <Item sx={{ display:'flex',justifyContent:'center' }}>
-              <SimpleBarChart taskPriorityList={taskPriorityList} />
-            </Item>
-          </Grid> */}
+         
         </Grid>
       )}
     </>

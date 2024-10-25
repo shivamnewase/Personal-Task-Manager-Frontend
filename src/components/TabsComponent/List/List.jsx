@@ -64,9 +64,10 @@ export default function DataTable() {
   const { userList } = useSelector((state) => state.auth);
 
   const [projectData, setProjectData] = useState([]);
-  
+  const [updatedProjectData, setUpdatedProjectData] = useState([]);
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [openModal, setOpenModal] = React.useState(false);
+  const [searchTerm, setSearchTerm] = React.useState("");
   const [selectedIDs, setSelectedIDs] = React.useState([
     { projectId: "", taskId: "" },
   ]);
@@ -82,7 +83,7 @@ export default function DataTable() {
 
   useEffect(() => {
     setProjectData(projectTaks?.tasks);
-    
+    setUpdatedProjectData(projectTaks?.tasks);
   }, []);
 
   const handleRowClick = (params) => {
@@ -112,14 +113,16 @@ export default function DataTable() {
   };
 
   const handleSearch = (e) => {
-    if (e.target.value.length >= 3) {
+    const value = e.target.value;
+    setSearchTerm(value); // Update the search term state
+
+    if (value.length >= 3) {
       const updatedData = projectData.filter((list) => {
-        return list.name.toLowerCase().includes(e.target.value.toLowerCase()) || list.status.toLowerCase().includes(e.target.value.toLowerCase());
+        return list.name.toLowerCase().includes(value.toLowerCase());
       });
       setProjectData(updatedData);
     } else {
-      
-      setProjectData(projectTaks?.tasks);
+      setProjectData(updatedProjectData);
     }
   };
 
@@ -302,68 +305,68 @@ export default function DataTable() {
 
   return (
     <>
-      <Grid spacing={3} container>
-        <Grid
-          item
-          xs={9}
-          md={9}
-          container
-          justifyContent="start"
-          alignItems="center"
+      <Grid container spacing={1} >
+  <Grid
+    item
+    xs={9}
+    md={9}
+    container
+    justifyContent="start"
+    alignItems="center"
+    
+  >
+    <Typography
+      variant="div"
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+        pt: -25, // Optionally reduce padding on Typography if needed
+      }}
+    >
+      {userList.map((list, index) => (
+        <Paper
+          key={list._id}
+          sx={{
+            backgroundColor: `${userColors[index]}`,
+            borderRadius: "50%",
+            width: "40px",
+            height: "40px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginRight: "-5px",
+            zIndex: 2,
+            transition: "transform 0.3s, border 0.3s", 
+            "&:hover": {
+              transform: "scale(1.1)", 
+              border: "2px solid white", 
+            },
+          }}
         >
-          <Typography
-            variant="div"
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
-            }}
-          >
-            {userList.map((list, index) => (
-              <Paper
-                key={list._id}
-                sx={{
-                  backgroundColor: `${userColors[index]}`,
-                  borderRadius: "50%",
-                  width: "40px",
-                  height: "40px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginRight: "-5px",
-                  zIndex: 2,
-                  transition: "transform 0.3s, border 0.3s", // Smooth transition for transform and border
-                  "&:hover": {
-                    transform: "scale(1.1)", // Zoom effect on hover
-                    border: "2px solid white", // Border effect on hover
-                  },
-                }}
-              >
-                <Typography variant="h6" sx={{ color: "white" }}>
-                  {list.name.split("")[0]}
-                </Typography>
-              </Paper>
-            ))}
+          <Typography variant="h6" sx={{ color: "white" }}>
+            {list.name.split("")[0]}
           </Typography>
-        </Grid>
-        <Grid item xs={3} md={3}>
-          <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-            <TextField
-              name="search"
-              label="Search "
-              // value={formValues.reporter}
+        </Paper>
+      ))}
+    </Typography>
+  </Grid>
+  <Grid item xs={3} md={3} sx={{pt:5}}>
+    <FormControl fullWidth size="small" sx={{ mb: 2, mt:0 }}>
+      <TextField
+        name="search"
+        label="Search"
+        value={searchTerm}
+        onChange={handleSearch}
+        size="small"
+        margin="normal"
+        required
+      />
+    </FormControl>
+  </Grid>
+</Grid>
 
-              onChange={(e) => {
-                handleSearch(e);
-              }}
-              size="small"
-              margin="normal"
-              required
-            ></TextField>
-          </FormControl>
-        </Grid>
-      </Grid>
 
       <Paper
         sx={{

@@ -1,30 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { Button, List, ListItem, ListItemIcon, ListItemText, Typography, Divider } from "@mui/material";
-import { useDispatch } from "react-redux";
 import {
-  findProjectAction,
-  getGraphAction,
-  getPriorityGraphAction
+  Button,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+  Divider,
+  Drawer,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  activeProjectAction,
 } from "../redux/actions/project.action";
 import ProjectModal from "../components/Modal/Project/CreateProjectModal";
+import ListItemButton from "@mui/material/ListItemButton";
+import { useTheme } from "../context/Theme";
 
-const ProjectList = ({ projectList, open }) => {
+const ProjectList = ({ projectList, open, activeProject }) => {
+  
+  const theme = useTheme();
   const dispatch = useDispatch();
-  const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const {user} = useSelector((state)=>state.auth)
   const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
-
-  useEffect(() => {
-    if (projectList.length > 0) {
-      handleProjectSelection(projectList[0]._id);
-    }
-  }, [projectList]);
-
-  const handleProjectSelection = (projectId) => {
-    setSelectedProjectId(projectId);
-    dispatch(findProjectAction(projectId));
-    dispatch(getGraphAction(projectId));
-    dispatch(getPriorityGraphAction(projectId));
-  };
 
   const handleCreateProject = () => {
     setOpenCreateProjectModal(true);
@@ -34,94 +32,93 @@ const ProjectList = ({ projectList, open }) => {
     setOpenCreateProjectModal(false);
   };
 
-  const renderProjectButton = (project) => (
-    <ListItem key={project._id} sx={{ padding: "3px 6px" }}>
-      <Button
-        fullWidth={open}
-        variant={selectedProjectId === project._id ? "contained" : "outlined"}
-        onClick={() => handleProjectSelection(project._id)}
-        sx={{
-          justifyContent: "flex-start",
-          textAlign: "left",
-          alignItems: "center",
-          width: open ? "100%" : "auto",
-          minWidth: open ? "auto" : 1,
-          py: 1,
-          mb: 1,
-          gap: 2,
-          borderRadius: "8px", // Add rounded corners
-          backgroundColor: selectedProjectId === project._id ? '#d1e7dd' : 'transparent', // Highlight selected
-          '&:hover': {
-            backgroundColor: selectedProjectId === project._id ? '#c3e6cb' : '#f1f1f1', // Change on hover
-          }
-        }}
-      >
-        <ListItemIcon
-          sx={{
-            minWidth: 0,
-            minHeight: 30,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <i className="fa-duotone fa-solid fa-file" />
-        </ListItemIcon>
-        {open && <ListItemText primary={project.projectName} />}
-      </Button>
-    </ListItem>
-  );
+  const handleItemClick = (btnValue) => {
+    switch (btnValue) {
+      case "Dashboard":
+        dispatch(activeProjectAction(""));
+
+        break;
+
+      default:
+        console.log("Unknown button clicked:", btnValue);
+    }
+  };
 
   return (
     <>
-      <Typography variant="h6" sx={{ padding: "16px", fontWeight: "bold" }}>
-        Projects
-      </Typography>
       <Divider />
-
-      <List sx={{ marginTop: "10px" }}>
-        {/* Create Project Button */}
-        <ListItem sx={{ padding: "3px 6px" }}>
-          <Button
-            fullWidth={open}
-            variant="contained"
-            color="primary"
-            onClick={handleCreateProject}
-            sx={{
-              justifyContent: "center",
-              textAlign: "left",
-              alignItems: "center",
-              width: open ? "100%" : "auto",
-              minWidth: open ? "auto" : 1,
-              py: 1,
-              mb: 3,
-              gap: 2,
-              borderRadius: "8px", // Rounded corners
-              boxShadow: 2, // Add shadow for depth
-              '&:hover': {
-                backgroundColor: '#0056b3', // Darker blue on hover
-              }
-            }}
-          >
-            <ListItemIcon
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          width: "100%",
+        }}
+      >
+        <div>
+          {" "}
+          <Typography variant="h6" sx={{ margin: "5px 0px 5px 5px" }}>
+            Projects
+          </Typography>
+        </div>
+        <div>
+          <ListItem>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleCreateProject}
               sx={{
-                minWidth: 0,
-                minHeight: 30,
-                display: "flex",
                 justifyContent: "center",
-                alignItems: "center",
+                textAlign: "left",
+                width: "auto",
+                gap: 2,
+                borderRadius: "2px",
+                boxShadow: 2,
+                "&:hover": {
+                  backgroundColor: "#0056b3",
+                },
               }}
             >
-              <i className="fa-duotone fa-solid fa-plus" />
-            </ListItemIcon>
-            {open && <ListItemText primary="Create Project" />}
-          </Button>
-        </ListItem>
-
-       
-        {projectList.map(renderProjectButton)}
-      </List>
-
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <i className="fa-duotone fa-solid fa-plus" />
+              </ListItemIcon>
+            </Button>
+          </ListItem>
+        </div>
+      </div>
+      <Divider />
+      {user.role === 'Admin' && ( // Render the button only if the user is an admin
+        <List>
+          {["Dashboard"].map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  handleItemClick(text);
+                }}
+                sx={{
+                  backgroundColor:
+                    activeProject === ""
+                      ? theme.theme.palette.primary.main
+                      : "inherit",
+                }}
+              >
+                <ListItemIcon>
+                  {index % 2 === 0 && (
+                    <i className="fa-solid fa-grid-horizontal"></i>
+                  )}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      )}
       <ProjectModal
         openModal={openCreateProjectModal}
         closeModal={handleCloseModal}
